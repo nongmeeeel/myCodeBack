@@ -1,0 +1,13 @@
+package com.example.mycodeBack;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+
+@SpringBootTest
+class MycodeBackApplicationTests {
+
+	@Test
+	void contextLoads() {
+	}
+
+}
