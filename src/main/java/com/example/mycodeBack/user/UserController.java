@@ -47,4 +47,10 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
+    @PostMapping("/filter")
+    public ResponseEntity<Void> insertUserCodeFilterMap(@RequestBody List<Long> itemIdList) {
+        userService.insertUserCodeFilterMap(itemIdList);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
 }

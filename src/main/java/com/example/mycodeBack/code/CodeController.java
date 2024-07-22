@@ -8,10 +8,9 @@ import com.example.mycodeBack.code.dto.response.CodeItemResponseDTO;
 import com.example.mycodeBack.code.dto.response.CodeTypeResponseDTO;
 import com.example.mycodeBack.user.dto.response.UserResponseDTO;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -21,10 +20,13 @@ import java.util.List;
 public class CodeController {
 
     final CodeService codeService;
+
     @GetMapping("/list")
     public ResponseEntity<List<CodeTypeResponseDTO>> getUserList() {
         List<CodeTypeResponseDTO> allCodeList = codeService.getAllCodeList();
         return ResponseEntity.ok()
                 .body(allCodeList);
     }
+
+
 }

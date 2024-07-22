@@ -1,8 +1,12 @@
 package com.example.mycodeBack.user;
 
+import com.example.mycodeBack.code.domain.CodeItem;
+import com.example.mycodeBack.code.domain.repository.CodeItemRepository;
 import com.example.mycodeBack.user.domain.Town;
 import com.example.mycodeBack.user.domain.User;
+import com.example.mycodeBack.user.domain.UserCodeFilterMap;
 import com.example.mycodeBack.user.domain.repository.TownRepository;
+import com.example.mycodeBack.user.domain.repository.UserCodeFilterMapRepository;
 import com.example.mycodeBack.user.domain.repository.UserRepository;
 import com.example.mycodeBack.user.dto.request.TownRequestDTO;
 import com.example.mycodeBack.user.dto.request.UserRequestDTO;
@@ -20,6 +24,8 @@ import java.util.stream.Collectors;
 public class UserService {
     private final UserRepository userRepository;
     private final TownRepository townRepository;
+    private final CodeItemRepository codeItemRepository;
+    private final UserCodeFilterMapRepository userCodeFilterMapRepository;
 
     public UserResponseDTO getUser() {
         Long tempUserId = 1L;
@@ -58,16 +64,24 @@ public class UserService {
         }
     }
 
-    public Optional<User> getUserById(Long id) {
-        return userRepository.findById(id);
-    }
+    @Transactional
+    public void insertUserCodeFilterMap(List<Long> itemIdList) {
+        Long tempUserId = 1L;
 
-    public User saveUser(User user) {
-        return userRepository.save(user);
-    }
+        User user = userRepository.findById(tempUserId).orElseThrow();
+        userCodeFilterMapRepository.deleteByUser(user);
 
-    public void deleteUserById(Long id) {
-        userRepository.deleteById(id);
+        List<UserCodeFilterMap> userCodeFilterMapList = itemIdList.stream()
+            .map(itemId -> {
+                CodeItem codeItem = codeItemRepository.findById(itemId).orElseThrow();
+                return UserCodeFilterMap.builder()
+                .user(user)
+                .codeItem(codeItem)
+                .build();
+            }).collect(Collectors.toList());
+
+        userCodeFilterMapRepository.saveAll(userCodeFilterMapList);
+
     }
 
 
