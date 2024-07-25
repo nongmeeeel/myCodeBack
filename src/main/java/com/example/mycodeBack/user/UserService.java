@@ -27,13 +27,13 @@ public class UserService {
     private final CodeItemRepository codeItemRepository;
     private final UserCodeFilterMapRepository userCodeFilterMapRepository;
 
-    public UserResponseDTO getUser() {
+    public UserResponseDTO selectUser() {
         Long tempUserId = 1L;
         User user = userRepository.findById(tempUserId).orElseThrow();
         return UserResponseDTO.toDTO(user);
     }
 
-    public List<UserResponseDTO> getUserList() {
+    public List<UserResponseDTO> selectUserList() {
         List<User> userList = userRepository.findAllByUseYn("Y");
         return userList.stream()
                 .map(user -> UserResponseDTO.toDTO(user))

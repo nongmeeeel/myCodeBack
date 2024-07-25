@@ -17,7 +17,8 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String snsCode;
+    private String kakaoId;
+    private String kakaoNickname;
     private String name;
     private String gender;
     private String birthDate;
@@ -26,6 +27,8 @@ public class User {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "town_code")
     private Town town;
+    private String role;
+
     private String useYn;
     private LocalDateTime insertDate;
     private LocalDateTime modifyDate;
