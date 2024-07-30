@@ -27,11 +27,11 @@ public class UserService {
     private final CodeItemRepository codeItemRepository;
     private final UserCodeFilterMapRepository userCodeFilterMapRepository;
 
-    public UserResponseDTO selectUser() {
-        Long tempUserId = 1L;
-        User user = userRepository.findById(tempUserId).orElseThrow();
-        return UserResponseDTO.toDTO(user);
-    }
+//    public UserResponseDTO selectUser() {
+//        Long tempUserId = 1L;
+//        User user = userRepository.findById(tempUserId).orElseThrow();
+//        return UserResponseDTO.toDTO(user);
+//    }
 
     public List<UserResponseDTO> selectUserList() {
         List<User> userList = userRepository.findAllByUseYn("Y");
@@ -40,8 +40,7 @@ public class UserService {
                 .collect(Collectors.toList());
     }
     @Transactional
-    public void updateUserTown(TownRequestDTO townRequestDTO) {
-        Long tempUserId = 1L;
+    public void updateUserTown(TownRequestDTO townRequestDTO, Long userId) {
         Town town = TownRequestDTO.toEntity(townRequestDTO);
 
         Optional<Town> townOp = townRepository.findById(town.getTownCode());
@@ -49,7 +48,7 @@ public class UserService {
             townRepository.saveAndFlush(town);
         }
 
-        User user = userRepository.findById(tempUserId).orElseThrow();
+        User user = userRepository.findById(userId).orElseThrow();
         user.updateTownCode(town);
     }
 
@@ -65,10 +64,8 @@ public class UserService {
     }
 
     @Transactional
-    public void insertUserCodeFilterMap(List<Long> itemIdList) {
-        Long tempUserId = 1L;
-
-        User user = userRepository.findById(tempUserId).orElseThrow();
+    public void insertUserCodeFilterMap(List<Long> itemIdList, User thisUser) {
+        User user = userRepository.findById(thisUser.getId()).orElseThrow();
         userCodeFilterMapRepository.deleteByUser(user);
 
         List<UserCodeFilterMap> userCodeFilterMapList = itemIdList.stream()

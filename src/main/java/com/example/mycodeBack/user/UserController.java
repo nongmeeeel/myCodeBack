@@ -1,5 +1,6 @@
 package com.example.mycodeBack.user;
 
+import com.example.mycodeBack.user.domain.User;
 import com.example.mycodeBack.user.dto.request.TownRequestDTO;
 import com.example.mycodeBack.user.dto.request.UserRequestDTO;
 import com.example.mycodeBack.user.dto.response.UserResponseDTO;
@@ -21,22 +22,22 @@ public class UserController {
     final UserService userService;
 
     @GetMapping("/user")
-    public ResponseEntity<UserResponseDTO> getUser() {
-        UserResponseDTO user = userService.selectUser();
+    public ResponseEntity<UserResponseDTO> getUser(User thisUser) {
+        UserResponseDTO user = UserResponseDTO.toDTO(thisUser);
         return ResponseEntity.ok()
                 .body(user);
     }
 
     @GetMapping("/list")
-    public ResponseEntity<List<UserResponseDTO>> getUserList() {
+    public ResponseEntity<List<UserResponseDTO>> getUserList(User thisUser) {
         List<UserResponseDTO> userList = userService.selectUserList();
         return ResponseEntity.ok()
                 .body(userList);
     }
 
     @PutMapping("/town")
-    public ResponseEntity<Void> updateUserTown(@RequestBody TownRequestDTO townRequestDTO, Principal principal) {
-        userService.updateUserTown(townRequestDTO);
+    public ResponseEntity<Void> updateUserTown(@RequestBody TownRequestDTO townRequestDTO, Principal principal, User thisUser) {
+        userService.updateUserTown(townRequestDTO, thisUser.getId());
 
         return ResponseEntity.noContent()
                 .build();
@@ -50,8 +51,8 @@ public class UserController {
     }
 
     @PostMapping("/filter")
-    public ResponseEntity<Void> insertUserCodeFilterMap(@RequestBody List<Long> itemIdList) {
-        userService.insertUserCodeFilterMap(itemIdList);
+    public ResponseEntity<Void> insertUserCodeFilterMap(@RequestBody List<Long> itemIdList, User thisUser) {
+        userService.insertUserCodeFilterMap(itemIdList, thisUser);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 

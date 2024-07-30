@@ -28,5 +28,9 @@ public class CodeController {
                 .body(allCodeList);
     }
 
-
+    @PostMapping("/filter")
+    public ResponseEntity<Void> insertUserCodeFilterMap(@RequestBody List<Integer> itemIdList) {
+        String temp = "하이";
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
 }
