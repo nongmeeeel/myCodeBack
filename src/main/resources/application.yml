@@ -8,7 +8,28 @@ spring:
     password: qwe321!!
 
   jpa:
+#    hibernate:
+#      ddl-auto: update
     show-sql: true
     properties:
       hibernate:
         format_sql: true
+  output:
+    ansi:
+      enabled: always
+
+logging:
+  level:
+    org:
+      springframework:
+        security:
+          web: TRACE
+
+jwt:
+  secretKey: qwe321qwe321qwe321qwe321qwe321qwe321qwe321qwe321qwe321
+  access:
+    #1일
+    expiration: 86400000
+  refresh:
+    #90일
+    expiration: 7776000000

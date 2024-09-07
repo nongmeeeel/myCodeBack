@@ -1,12 +1,6 @@
 package com.example.mycodeBack.code;
 
-import com.example.mycodeBack.code.domain.CodeItem;
-import com.example.mycodeBack.code.domain.CodeType;
-import com.example.mycodeBack.code.domain.repository.CodeItemRepository;
-import com.example.mycodeBack.code.domain.repository.CodeTypeRepository;
-import com.example.mycodeBack.code.dto.response.CodeItemResponseDTO;
 import com.example.mycodeBack.code.dto.response.CodeTypeResponseDTO;
-import com.example.mycodeBack.user.dto.response.UserResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,14 +16,14 @@ public class CodeController {
     final CodeService codeService;
 
     @GetMapping("/list")
-    public ResponseEntity<List<CodeTypeResponseDTO>> getUserList() {
+    public ResponseEntity<List<CodeTypeResponseDTO>> getMemberList() {
         List<CodeTypeResponseDTO> allCodeList = codeService.getAllCodeList();
         return ResponseEntity.ok()
                 .body(allCodeList);
     }
 
     @PostMapping("/filter")
-    public ResponseEntity<Void> insertUserCodeFilterMap(@RequestBody List<Integer> itemIdList) {
+    public ResponseEntity<Void> insertMemberCodeFilterMap(@RequestBody List<Integer> itemIdList) {
         String temp = "하이";
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
