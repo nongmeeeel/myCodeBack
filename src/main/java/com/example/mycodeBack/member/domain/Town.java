@@ -1,5 +1,6 @@
 package com.example.mycodeBack.member.domain;
 
+import com.example.mycodeBack.common.BaseEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
@@ -14,7 +15,7 @@ import java.math.BigDecimal;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Town {
+public class Town extends BaseEntity {
     @Id
     private String townCode;
     private String nm;

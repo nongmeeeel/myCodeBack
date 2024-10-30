@@ -1,6 +1,7 @@
 package com.example.mycodeBack.member.domain;
 
 import com.example.mycodeBack.code.domain.CodeItem;
+import com.example.mycodeBack.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,7 +15,7 @@ import java.time.LocalDateTime;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class MemberCodeMap {
+public class MemberCodeMap extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -25,9 +26,6 @@ public class MemberCodeMap {
     @JoinColumn(name = "code_item_id")
     private CodeItem codeItem;
     private String useYn;
-    private LocalDateTime insertDate;
-    private LocalDateTime modifyDate;
-    private String modifyBy;
 
     // 생성자, setter, toString 등 필요한 코드 추가
 }

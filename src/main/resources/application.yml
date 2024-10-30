@@ -23,13 +23,15 @@ logging:
     org:
       springframework:
         security:
-          web: TRACE
+          web: INFO
 
 jwt:
   secretKey: qwe321qwe321qwe321qwe321qwe321qwe321qwe321qwe321qwe321
   access:
     #1일
+#    expiration: 10000
     expiration: 86400000
   refresh:
     #90일
+#    expiration: 30000
     expiration: 7776000000

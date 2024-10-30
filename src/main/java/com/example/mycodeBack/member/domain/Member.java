@@ -1,5 +1,7 @@
 package com.example.mycodeBack.member.domain;
 
+import com.example.mycodeBack.common.BaseEntity;
+import com.example.mycodeBack.member.domain.type.MemberRole;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -7,8 +9,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 import static jakarta.persistence.EnumType.STRING;
 
@@ -17,30 +17,29 @@ import static jakarta.persistence.EnumType.STRING;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Member {
+public class Member extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String kakaoYn;
+    private String email;
+    private String pw;
+    private String loginType;
     private String kakaoNickname;
     private String name;
     private String gender;
     private String birthDate;
-    private String email;
-    private String pw;
     private String phoneNumber;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "town_code")
     private Town town;
 
     @Enumerated(value = STRING)
     private MemberRole role;
+
     private String refreshToken;
 
     private String useYn;
-    private LocalDateTime insertDate;
-    private LocalDateTime modifyDate;
-    private String modifyBy;
 
     // 권한 수정
 //    public void addRole(MemberRole memberRole) {

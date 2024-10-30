@@ -9,7 +9,7 @@ import lombok.Data;
 public class MemberResponseDTO {
 
     private Long id;
-    private String kakaoYn;
+    private String loginType;
     private String kakaoNickname;
     private String name;
     private String gender;
@@ -21,7 +21,7 @@ public class MemberResponseDTO {
     public static MemberResponseDTO toDTO(Member member) {
         return MemberResponseDTO.builder()
                 .id(member.getId())
-                .kakaoYn(member.getKakaoYn())
+                .loginType(member.getLoginType())
                 .kakaoNickname(member.getKakaoNickname())
                 .name(member.getName())
                 .gender(member.getGender())

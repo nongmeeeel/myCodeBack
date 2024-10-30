@@ -15,16 +15,11 @@ public class CodeController {
 
     final CodeService codeService;
 
+    // 코드 목록 조회
     @GetMapping("/list")
     public ResponseEntity<List<CodeTypeResponseDTO>> getMemberList() {
         List<CodeTypeResponseDTO> allCodeList = codeService.getAllCodeList();
         return ResponseEntity.ok()
                 .body(allCodeList);
-    }
-
-    @PostMapping("/filter")
-    public ResponseEntity<Void> insertMemberCodeFilterMap(@RequestBody List<Integer> itemIdList) {
-        String temp = "하이";
-        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 }

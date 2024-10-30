@@ -1,5 +1,6 @@
 package com.example.mycodeBack.common.exception;
 
+import com.example.mycodeBack.common.exception.type.ExceptionCode;
 import lombok.Getter;
 
 @Getter

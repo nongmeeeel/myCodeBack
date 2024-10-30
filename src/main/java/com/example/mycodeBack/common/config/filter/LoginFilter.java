@@ -4,7 +4,6 @@ import com.example.mycodeBack.common.config.auth.CustomUserDetails;
 import com.example.mycodeBack.common.config.auth.JWTUtil;
 import com.example.mycodeBack.common.exception.ExceptionResponse;
 import com.example.mycodeBack.member.MemberService;
-import com.example.mycodeBack.member.domain.repository.MemberRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -27,7 +26,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 
-import static com.example.mycodeBack.common.exception.ExceptionCode.*;
+import static com.example.mycodeBack.common.exception.type.ExceptionCode.*;
 
 // 스프링 시큐리티에 UsernamePasswordAuthenticationFilter 필터가 기본적으로 있음.
 // 원래는 formLogin 에서 userName,PW 전송하면 기본으로 동작함.

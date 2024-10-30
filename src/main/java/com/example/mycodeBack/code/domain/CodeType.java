@@ -1,5 +1,6 @@
 package com.example.mycodeBack.code.domain;
 
+import com.example.mycodeBack.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 
@@ -8,17 +9,13 @@ import java.util.List;
 
 @Entity
 @Getter
-public class CodeType {
+public class CodeType extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String title;
     private String info;
     private String useYn;
-    private LocalDateTime insertDate;
-    private LocalDateTime modifyDate;
-    private String modifyBy;
-
     // mappedBy
     @OneToMany(mappedBy = "codeType", fetch = FetchType.LAZY)
     private List<CodeCategory> codeCategories;

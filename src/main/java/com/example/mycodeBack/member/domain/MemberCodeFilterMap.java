@@ -1,6 +1,7 @@
 package com.example.mycodeBack.member.domain;
 
 import com.example.mycodeBack.code.domain.CodeItem;
+import com.example.mycodeBack.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,7 +19,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
-public class MemberCodeFilterMap {
+public class MemberCodeFilterMap extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -29,10 +30,5 @@ public class MemberCodeFilterMap {
     @JoinColumn(name = "code_item_id")
     private CodeItem codeItem;
     private String useYn;
-    @CreatedDate
-    private LocalDateTime insertDate = LocalDateTime.now();
-    @LastModifiedDate
-    private LocalDateTime modifyDate;
-    private String modifyBy;
 
 }

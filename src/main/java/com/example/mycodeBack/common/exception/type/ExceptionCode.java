@@ -1,4 +1,4 @@
-package com.example.mycodeBack.common.exception;
+package com.example.mycodeBack.common.exception.type;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;

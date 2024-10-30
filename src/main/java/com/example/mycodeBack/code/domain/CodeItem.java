@@ -1,5 +1,6 @@
 package com.example.mycodeBack.code.domain;
 
+import com.example.mycodeBack.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 
@@ -7,7 +8,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Getter
-public class CodeItem {
+public class CodeItem extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -17,9 +18,6 @@ public class CodeItem {
     @JoinColumn(name = "code_category_id")
     private CodeCategory codeCategory;
     private String useYn;
-    private LocalDateTime insertDate;
-    private LocalDateTime modifyDate;
-    private String modifyBy;
 
     // 생성자, setter, toString 등 필요한 코드 추가
 }

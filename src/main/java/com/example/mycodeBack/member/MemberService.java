@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.example.mycodeBack.common.exception.ExceptionCode.NOT_FOUND_USER_ID;
+import static com.example.mycodeBack.common.exception.type.ExceptionCode.NOT_FOUND_USER_ID;
 
 @Service
 @RequiredArgsConstructor
@@ -35,14 +35,34 @@ public class MemberService {
 //        return UserResponseDTO.toDTO(user);
 //    }
 
+    public MemberResponseDTO fetchMember(String email) {
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException(NOT_FOUND_USER_ID));
+        return MemberResponseDTO.toDTO(member);
+    }
+
     public List<MemberResponseDTO> selectMemberList() {
         List<Member> memberList = memberRepository.findAllByUseYn("Y");
         return memberList.stream()
                 .map(member -> MemberResponseDTO.toDTO(member))
                 .collect(Collectors.toList());
     }
+
+    public void updateFilter(List<Object> itemsInHobbyFilter) {
+
+    }
+
+    public List<MemberResponseDTO> selectMemberListByMap(double northEastLat, double northEastLng, double southWestLat, double southWestLng) {
+        List<Member> memberList = memberRepository.selectMemberListByMap(
+                southWestLat, northEastLat, southWestLng, northEastLng
+        );
+        return memberList.stream()
+                .map(member -> MemberResponseDTO.toDTO(member))
+                .collect(Collectors.toList());
+    }
+
     @Transactional
-    public void updateMemberTown(TownRequestDTO townRequestDTO, Long memberId) {
+    public void updateMemberTown(TownRequestDTO townRequestDTO, String email) {
         Town town = TownRequestDTO.toEntity(townRequestDTO);
 
         Optional<Town> townOp = townRepository.findById(town.getTownCode());
@@ -50,34 +70,25 @@ public class MemberService {
             townRepository.saveAndFlush(town);
         }
 
-        Member member = memberRepository.findById(memberId).orElseThrow();
+        Member member = memberRepository.findByEmail(email).orElseThrow();
         member.updateTownCode(town);
     }
 
     @Transactional
-    public void insertTownTemp(TownRequestDTO townRequestDTO) {
-        Town town = TownRequestDTO.toEntity(townRequestDTO);
-
-        Optional<Town> townOp = townRepository.findById(town.getTownCode());
-        if (!townOp.isPresent()) {
-            townRepository.saveAndFlush(town);
-            System.out.println("저장완료 : " + town.getTownCode());
-        }
-    }
-
-    @Transactional
-    public void insertMemberCodeFilterMap(List<Long> itemIdList, Member thisMember) {
-        Member member = memberRepository.findById(thisMember.getId()).orElseThrow();
+    public void updateMemberCodeFilterMap(List<Long> itemIdList, String email) {
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException(NOT_FOUND_USER_ID));
         memberCodeFilterMapRepository.deleteByMember(member);
 
-        List<MemberCodeFilterMap> memberCodeFilterMapList = itemIdList.stream()
-            .map(itemId -> {
-                CodeItem codeItem = codeItemRepository.findById(itemId).orElseThrow();
-                return MemberCodeFilterMap.builder()
-                .member(member)
-                .codeItem(codeItem)
-                .build();
-            }).collect(Collectors.toList());
+        List<CodeItem> codeItems = codeItemRepository.findAllById(itemIdList);
+        // MemberCodeFilterMap 리스트 생성
+        List<MemberCodeFilterMap> memberCodeFilterMapList = codeItems.stream()
+                .map(codeItem -> {
+                    return MemberCodeFilterMap.builder()
+                            .member(member)
+                            .codeItem(codeItem)
+                            .build();
+                }).collect(Collectors.toList());
 
         memberCodeFilterMapRepository.saveAll(memberCodeFilterMapList);
     }
@@ -89,7 +100,21 @@ public class MemberService {
                         member -> member.updateRefreshToken(refreshToken),
                         () -> new UserNotFoundException(NOT_FOUND_USER_ID)
                 );
+    }
 
+
+
+
+    // 임시 : town 추가
+    @Transactional
+    public void insertTownTemp(TownRequestDTO townRequestDTO) {
+        Town town = TownRequestDTO.toEntity(townRequestDTO);
+
+        Optional<Town> townOp = townRepository.findById(town.getTownCode());
+        if (!townOp.isPresent()) {
+            townRepository.saveAndFlush(town);
+            System.out.println("저장완료 : " + town.getTownCode());
+        }
     }
 
 

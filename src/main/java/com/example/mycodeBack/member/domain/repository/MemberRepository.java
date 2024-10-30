@@ -18,6 +18,14 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
     Member findByRefreshToken(String refreshToken);
 
+    @Query("SELECT m FROM Member m JOIN m.town t WHERE t.lat BETWEEN :southWestLat AND :northEastLat AND t.lng BETWEEN :southWestLng AND :northEastLng")
+    List<Member> selectMemberListByMap(
+            @Param("southWestLat") double southWestLat,
+            @Param("northEastLat") double northEastLat,
+            @Param("southWestLng") double southWestLng,
+            @Param("northEastLng") double northEastLng
+    );
+
 
 
 //    @EntityGraph(attributePaths = {"roleList"})

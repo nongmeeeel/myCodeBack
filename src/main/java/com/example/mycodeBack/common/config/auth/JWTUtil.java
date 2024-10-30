@@ -1,6 +1,5 @@
 package com.example.mycodeBack.common.config.auth;
 
-import com.example.mycodeBack.common.exception.type.JWTAccessException;
 import com.example.mycodeBack.member.domain.Member;
 import com.example.mycodeBack.member.domain.repository.MemberRepository;
 import io.jsonwebtoken.Claims;
@@ -24,8 +23,6 @@ import javax.crypto.spec.SecretKeySpec;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
-
-import static com.example.mycodeBack.common.exception.ExceptionCode.ACCESS_TOKEN_ERROR;
 
 @Slf4j
 @Component

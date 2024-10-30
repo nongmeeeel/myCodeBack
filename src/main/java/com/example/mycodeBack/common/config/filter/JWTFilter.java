@@ -1,7 +1,6 @@
 package com.example.mycodeBack.common.config.filter;
 
 import com.example.mycodeBack.common.config.auth.JWTUtil;
-import com.example.mycodeBack.common.exception.ExceptionCode;
 import com.example.mycodeBack.common.exception.type.JWTAccessException;
 import com.example.mycodeBack.common.exception.type.JWTRefreshException;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -16,8 +15,8 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
-import static com.example.mycodeBack.common.exception.ExceptionCode.ACCESS_TOKEN_ERROR;
-import static com.example.mycodeBack.common.exception.ExceptionCode.REFRESH_TOKEN_ERROR;
+import static com.example.mycodeBack.common.exception.type.ExceptionCode.ACCESS_TOKEN_ERROR;
+import static com.example.mycodeBack.common.exception.type.ExceptionCode.REFRESH_TOKEN_ERROR;
 
 @Slf4j
 @RequiredArgsConstructor

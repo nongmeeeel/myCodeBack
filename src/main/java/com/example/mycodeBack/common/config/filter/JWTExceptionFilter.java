@@ -9,11 +9,13 @@ import io.jsonwebtoken.MalformedJwtException;
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 
-import static com.example.mycodeBack.common.exception.ExceptionCode.*;
+import static com.example.mycodeBack.common.exception.type.ExceptionCode.*;
 
+@Slf4j
 @RequiredArgsConstructor
 public class JWTExceptionFilter implements Filter {
 
@@ -35,18 +37,22 @@ public class JWTExceptionFilter implements Filter {
 
         } catch (ExpiredJwtException e) {
             String errorResponse = objectMapper.writeValueAsString(new ExceptionResponse(ACCESS_TOKEN_EXPIRED));
+            log.error("JWT 에러 : ", e);
             response.getWriter().write(errorResponse);
 
         } catch (MalformedJwtException e) {
             String errorResponse = objectMapper.writeValueAsString(new ExceptionResponse(ACCESS_TOKEN_MALFORMED));
+            log.error("JWT 에러 : ", e);
             response.getWriter().write(errorResponse);
 
         } catch (JWTAccessException e) {
             String errorResponse = objectMapper.writeValueAsString(new ExceptionResponse(ACCESS_TOKEN_ERROR));
+            log.error("JWT 에러 : ", e);
             response.getWriter().write(errorResponse);
 
         } catch (JWTRefreshException e) {
             String errorResponse = objectMapper.writeValueAsString(new ExceptionResponse(REFRESH_TOKEN_ERROR));
+            log.error("JWT 에러 : ", e);
             response.getWriter().write(errorResponse);
         }
     }

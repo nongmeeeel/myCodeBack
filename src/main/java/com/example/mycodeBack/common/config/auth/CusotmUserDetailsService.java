@@ -9,7 +9,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import static com.example.mycodeBack.common.exception.ExceptionCode.NOT_FOUND_USER_ID;
+import static com.example.mycodeBack.common.exception.type.ExceptionCode.NOT_FOUND_USER_ID;
 
 // /login 경로로 요청 오면 디폴트로 실행 됨
 @Service
