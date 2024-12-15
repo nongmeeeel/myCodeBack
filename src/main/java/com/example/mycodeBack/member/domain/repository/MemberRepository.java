@@ -1,6 +1,8 @@
 package com.example.mycodeBack.member.domain.repository;
 
+import com.example.mycodeBack.code.domain.CodeType;
 import com.example.mycodeBack.member.domain.Member;
+import com.example.mycodeBack.member.dto.response.MemberCodeResponseDTO;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -18,7 +20,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
     Member findByRefreshToken(String refreshToken);
 
-    @Query("SELECT m FROM Member m JOIN m.town t WHERE t.lat BETWEEN :southWestLat AND :northEastLat AND t.lng BETWEEN :southWestLng AND :northEastLng")
+    @Query("SELECT m FROM Member m JOIN m.town t WHERE t.y BETWEEN :southWestLat AND :northEastLat AND t.x BETWEEN :southWestLng AND :northEastLng")
     List<Member> selectMemberListByMap(
             @Param("southWestLat") double southWestLat,
             @Param("northEastLat") double northEastLat,
@@ -28,7 +30,21 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
 
 
-//    @EntityGraph(attributePaths = {"roleList"})
-//    @Query("select m from Member m where m.email = :email")
-//    Member getWithRoles(@Param("email") String email);
+//    @EntityGraph(attributePaths = {
+//            "memberCodeMap",                 // Member -> MemberCodeMap
+//            "memberCodeMap.codeItem",        // MemberCodeMap -> CodeItem
+//            "memberCodeMap.codeItem.codeCategory", // CodeItem -> CodeCategory
+//            "memberCodeMap.codeItem.codeCategory.codeType" // CodeCategory -> CodeType
+//    })
+    @Query("""
+        SELECT new com.example.mycodeBack.member.dto.response.MemberCodeResponseDTO(ci.id, ci.title, cc.id, cc.title, ct.id, ct.title)
+        FROM Member m
+        JOIN m.memberCodeMap mcm
+        JOIN mcm.codeItem ci
+        JOIN ci.codeCategory cc
+        JOIN cc.codeType ct
+        WHERE m.id = :memberId
+    """)
+    List<MemberCodeResponseDTO> findCodeListByMemberId(@Param("memberId") Long memberId);
+
 }

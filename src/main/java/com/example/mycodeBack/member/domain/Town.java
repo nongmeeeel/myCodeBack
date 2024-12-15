@@ -17,11 +17,8 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 public class Town extends BaseEntity {
     @Id
-    private String townCode;
-    private String nm;
-    private String fullNm;
-    private String engNm;
-    private BigDecimal lat;
-    private BigDecimal lng;
-    private Double zoomLevel;
+    private String id;
+    private String title;
+    private double x;
+    private double y;
 }

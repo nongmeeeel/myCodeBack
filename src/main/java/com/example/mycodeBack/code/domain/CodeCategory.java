@@ -15,7 +15,7 @@ public class CodeCategory extends BaseEntity {
     private Long id;
     private String title;
     private String info;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "code_type_id")
     private CodeType codeType;
     private String useYn;

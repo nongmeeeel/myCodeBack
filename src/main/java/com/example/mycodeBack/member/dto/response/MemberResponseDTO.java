@@ -1,6 +1,7 @@
 package com.example.mycodeBack.member.dto.response;
 
 import com.example.mycodeBack.member.domain.Member;
+import com.example.mycodeBack.member.domain.type.MemberRole;
 import lombok.Builder;
 import lombok.Data;
 
@@ -16,7 +17,8 @@ public class MemberResponseDTO {
     private String birthDate;
     private String email;
     private String phoneNumber;
-    private TownResponseDTO memberTown;
+    private MemberRole role;
+    private MemberTownResponseDTO memberTown;
 
     public static MemberResponseDTO toDTO(Member member) {
         return MemberResponseDTO.builder()
@@ -28,7 +30,8 @@ public class MemberResponseDTO {
                 .birthDate(member.getBirthDate())
                 .email(member.getEmail())
                 .phoneNumber(member.getPhoneNumber())
-                .memberTown(TownResponseDTO.toDTO(member.getTown()))
+                .role(member.getRole())
+                .memberTown(MemberTownResponseDTO.toDTO(member.getTown()))
                 .build();
     }
 }

@@ -72,10 +72,11 @@ public class JWTUtil {
                 .before(new Date());
     }
 
-    public String createAccessToken(String username, String role) {
+    public String createAccessToken(String username, String role, Long id) {
         return BEARER + Jwts.builder()
                 .claim("username", username)
                 .claim("role", role)
+                .claim("id", id)
                 .subject(ACCESS_TOKEN_SUBJECT)
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_EXPIRED_MS))
@@ -108,7 +109,9 @@ public class JWTUtil {
         Claims claims = validAndParseToken(accessToken);
         String username = claims.get("username").toString();
         String role = claims.get("role").toString();
-        saveAuthentication(username, role);
+        Integer intId = (Integer) claims.get("id");
+        Long id = intId.longValue();
+        saveAuthentication(username, role, id);
     }
 
     public void checkRefreshTokenAndReIssueAccessToken(HttpServletResponse response, String refreshToken) {
@@ -116,7 +119,7 @@ public class JWTUtil {
         Member member = memberRepository.findByRefreshToken(BEARER + refreshToken);
 
         String reIssuedRefreshToken = reIssuedRefreshToken(member);
-        String accessToken = createAccessToken(member.getEmail(), member.getRole().name());
+        String accessToken = createAccessToken(member.getEmail(), member.getRole().name(), member.getId());
 
         response.setHeader("Access-Token", accessToken);
         response.setHeader("Refresh-Token", reIssuedRefreshToken);
@@ -150,9 +153,9 @@ public class JWTUtil {
         }
     }
 
-    public void saveAuthentication(String username, String role) {
+    public void saveAuthentication(String username, String role, Long id) {
         List<GrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority(role));
-        CustomUser customUser = CustomUser.of(username,role);
+        CustomUser customUser = CustomUser.of(username,role,id);
 
         Authentication authentication
                 = new UsernamePasswordAuthenticationToken(customUser, null, authorities);

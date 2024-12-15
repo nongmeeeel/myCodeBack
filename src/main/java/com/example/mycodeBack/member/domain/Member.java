@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static jakarta.persistence.EnumType.STRING;
 
@@ -31,7 +32,7 @@ public class Member extends BaseEntity {
     private String phoneNumber;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "town_code")
+    @JoinColumn(name = "town_id")
     private Town town;
 
     @Enumerated(value = STRING)
@@ -40,6 +41,12 @@ public class Member extends BaseEntity {
     private String refreshToken;
 
     private String useYn;
+
+
+
+
+    @OneToMany(mappedBy = "member") // "member"는 MemberCodeMap에서 연관된 필드 이름
+    private List<MemberCodeMap> memberCodeMap;
 
     // 권한 수정
 //    public void addRole(MemberRole memberRole) {
@@ -63,4 +70,17 @@ public class Member extends BaseEntity {
     }
 
     public void updateRefreshToken(String refreshToken) {this.refreshToken = refreshToken; }
+
+    public void signUp(String name, String gender, String birthDate) {
+        this.name = name;
+        this.gender = gender;
+        this.birthDate = birthDate;
+        this.role = MemberRole.MEMBER;
+    }
+
+    public void updateMember(String name, String gender, String birthDate) {
+        this.name = name;
+        this.gender = gender;
+        this.birthDate = birthDate;
+    }
 }

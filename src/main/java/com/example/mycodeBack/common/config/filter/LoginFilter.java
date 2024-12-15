@@ -56,8 +56,18 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
             // Request Body : Json 형식 USERNAME, PASSWORD 읽어오기
             String body = StreamUtils.copyToString(request.getInputStream(), StandardCharsets.UTF_8);
             Map<String, String> bodyMap = objectMapper.readValue(body, Map.class);
+
             String username = bodyMap.get("username");
             String password = bodyMap.get("password");
+            String loginType = bodyMap.get("loginType");
+            String nickname = bodyMap.get("nickname");
+
+            // 소셜 로그인('K' - 카카오)인 경우 자동 회원가입 진행
+            if (loginType.equals("K")) {
+                memberService.checkSignUpKakaoEmail(username, password, loginType, nickname);
+            }
+
+            // 인증매니저를 통해 id,pw 검증 진행
             UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(username, password);
             return authenticationManager.authenticate(authToken);
 
@@ -79,10 +89,11 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         Iterator<? extends GrantedAuthority> iterator = authorities.iterator();
         GrantedAuthority auth = iterator.next();
         String role = auth.getAuthority();
+        Long id = customUserDetails.getId();
         log.info("username : {}", username);
         log.info("role : {}", role);
 
-        String accessToken = jwtUtil.createAccessToken(username, role);
+        String accessToken = jwtUtil.createAccessToken(username, role, id);
         String refreshToken = jwtUtil.createRefreshToken();
         log.info("발급된 accessToken : {}", accessToken);
         log.info("발급된 refreshToken : {}", refreshToken);
@@ -103,7 +114,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         response.setCharacterEncoding("UTF-8");
         response.setContentType("application/json");
 
-        if (failed.getMessage().equals("가입되지 않은 USER 입니다.")) {
+        if (failed.getMessage().equals("해당 유저를 찾을 수 없습니다.")) {
             response.getWriter().write(objectMapper.writeValueAsString(new ExceptionResponse(NOT_FOUND_USER_ID)));
         } else if (failed.getMessage().equals("자격 증명에 실패하였습니다.")) {
             response.getWriter().write(objectMapper.writeValueAsString(new ExceptionResponse(NOT_MACHED_USER_PW)));

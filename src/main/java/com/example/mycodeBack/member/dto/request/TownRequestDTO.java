@@ -9,23 +9,17 @@ import java.math.BigDecimal;
 @Data
 @Builder
 public class TownRequestDTO {
-    private final String townCode;
-    private final String nm;
-    private final String fullNm;
-    private final String engNm;
-    private final BigDecimal lat;
-    private final BigDecimal lng;
-    private final Double zoomLevel;
+    private final String id;
+    private final String title;
+    private final double x;
+    private final double y;
 
-    public static Town toEntity(TownRequestDTO townRequestDTO) {
+    public Town toEntity() {
         return Town.builder()
-                .townCode(townRequestDTO.townCode)
-                .nm(townRequestDTO.nm)
-                .fullNm(townRequestDTO.fullNm)
-                .engNm(townRequestDTO.engNm)
-                .lat(townRequestDTO.lat)
-                .lng(townRequestDTO.lng)
-                .zoomLevel(townRequestDTO.zoomLevel)
+                .id(this.id)
+                .title(this.title)
+                .x(this.x)
+                .y(this.y)
                 .build();
     }
 }
