@@ -1,6 +1,7 @@
 package com.example.mycodeBack.chat;
 
 import com.example.mycodeBack.chat.domain.ChatMessage;
+import com.example.mycodeBack.chat.dto.request.ChatMessageRequestDTO;
 import com.example.mycodeBack.chat.dto.request.CreateChatRoomRequestDTO;
 import com.example.mycodeBack.chat.dto.response.ChatMessageResponseDTO;
 import com.example.mycodeBack.chat.dto.response.ChatResponseDTO;
@@ -8,6 +9,7 @@ import com.example.mycodeBack.code.dto.response.CodeTypeResponseDTO;
 import com.example.mycodeBack.common.config.auth.CustomUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
@@ -21,11 +23,17 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ChatController {
     private final ChatService chatService;
-
-    @MessageMapping("/send")
-    @SendTo("/topic/messages")
-    public ChatMessageResponseDTO sendMessage(@Payload ChatMessage chatMessage) {
-        return chatService.saveAndSendMessage(chatMessage);
+    // /send 경로로 request가 오면, 처리 후 -> /topic/messages를 구독하는 클라이언트에 return값을 보낸다.
+    @MessageMapping("/chat/{roomId}/send")
+    @SendTo("/topic/chat/{roomId}")  // 채팅방별 메시지 전송
+    public ChatMessageResponseDTO sendMessage(
+            @DestinationVariable Long roomId,
+            @Payload ChatMessageRequestDTO chatMessageRequestDTO,
+            Authentication authentication
+    ) {
+        System.out.println("/topic/messages 확인");
+        CustomUser thisMember = (CustomUser) authentication.getPrincipal();
+        return chatService.saveAndSendMessage(chatMessageRequestDTO, thisMember.getId());
     }
 
     @GetMapping("/rooms")
@@ -38,9 +46,9 @@ public class ChatController {
 
     @PostMapping("/room")
     public ResponseEntity<ChatResponseDTO> createChatRoom(@RequestBody CreateChatRoomRequestDTO createChatRoomRequestDTO, Authentication authentication) {
-        CustomUser thisUser = (CustomUser) authentication.getPrincipal();
+        CustomUser thisMember = (CustomUser) authentication.getPrincipal();
 
-        createChatRoomRequestDTO.addChatMemberIdListAtFirst(thisUser.getId());
+        createChatRoomRequestDTO.addChatMemberIdListAtFirst(thisMember.getId());
 
         ChatResponseDTO chatRoom = chatService.createChatRoom(createChatRoomRequestDTO);
         return ResponseEntity.ok(chatRoom);
