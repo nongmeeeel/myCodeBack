@@ -65,14 +65,6 @@ public class MemberController {
                 .build();
     }
 
-    // 지도 탐색 시 필터할 코드 UPDATE
-    @PutMapping("/code/filter")
-    public ResponseEntity<Void> updateMemberCodeFilterMap(@RequestBody List<Long> itemIdList, Authentication authentication ) {
-        CustomUser customUser = (CustomUser) authentication.getPrincipal();
-
-        memberService.updateMemberCodeFilterMap(itemIdList, customUser.getEmail());
-        return ResponseEntity.status(HttpStatus.CREATED).build();
-    }
 
     // 임시 : town 추가
     @PostMapping("/town")
@@ -97,18 +89,37 @@ public class MemberController {
 
     @PutMapping("/code")
     public ResponseEntity<Void> updateMemberCodeMap(@RequestBody List<Long> codeItemIdSet, Authentication authentication) {
-        CustomUser customUser = (CustomUser) authentication.getPrincipal();
+        CustomUser thisUser = (CustomUser) authentication.getPrincipal();
 
-        memberService.updateMemberCodeMap(codeItemIdSet, customUser.getEmail());
+        memberService.updateMemberCodeMap(codeItemIdSet, thisUser.getId());
+
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @PutMapping("/code/filter")
+    public ResponseEntity<Void> updateMemberCodeFilterMap(@RequestBody List<Long> codeItemIdSet, Authentication authentication) {
+        CustomUser thisUser = (CustomUser) authentication.getPrincipal();
+
+        memberService.updateMemberCodeFilterMap(codeItemIdSet, thisUser.getId());
 
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @GetMapping("/codes")
     public ResponseEntity<List<MemberCodeResponseDTO>> selectMemberCodeList(Authentication authentication) {
-        CustomUser customUser = (CustomUser) authentication.getPrincipal();
+        CustomUser thisUser = (CustomUser) authentication.getPrincipal();
 
-        List<MemberCodeResponseDTO> memberCodeResponseDTOList = memberService.selectMemberCodeList(customUser.getEmail());
+        List<MemberCodeResponseDTO> memberCodeResponseDTOList = memberService.selectMemberCodeList(thisUser.getId());
+
+        return ResponseEntity.ok()
+                .body(memberCodeResponseDTOList);
+    }
+
+    @GetMapping("/codes/filter")
+    public ResponseEntity<List<MemberCodeResponseDTO>> selectMemberCodeFilterList(Authentication authentication) {
+        CustomUser thisUser = (CustomUser) authentication.getPrincipal();
+
+        List<MemberCodeResponseDTO> memberCodeResponseDTOList = memberService.selectMemberCodeFilterList(thisUser.getId());
 
         return ResponseEntity.ok()
                 .body(memberCodeResponseDTOList);

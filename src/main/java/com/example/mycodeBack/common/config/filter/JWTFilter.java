@@ -27,6 +27,8 @@ public class JWTFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
+        log.info("JWT필터 작동");
+
         /* 로그인 요청의 경우 다음 필터(로그인 필터)로 진행 */
         if(request.getRequestURI().equals("/login") && request.getMethod().equals("POST")) {
             filterChain.doFilter(request, response);

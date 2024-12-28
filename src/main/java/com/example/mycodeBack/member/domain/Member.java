@@ -48,6 +48,9 @@ public class Member extends BaseEntity {
     @OneToMany(mappedBy = "member") // "member"는 MemberCodeMap에서 연관된 필드 이름
     private List<MemberCodeMap> memberCodeMap;
 
+    @OneToMany(mappedBy = "member") // "member"는 MemberCodeMap에서 연관된 필드 이름
+    private List<MemberCodeFilterMap> memberCodeFilterMap;
+
     // 권한 수정
 //    public void addRole(MemberRole memberRole) {
 //        roleList.add(memberRole);

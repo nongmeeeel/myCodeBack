@@ -14,11 +14,13 @@ public class FetchMemberResponseDTO {
 
     private MemberResponseDTO memberResponseDTO;
     private List<MemberCodeResponseDTO> MemberCodeResponseDTOList;
+    private List<MemberCodeResponseDTO> MemberCodeFilterResponseDTOList;
 
-    public static FetchMemberResponseDTO toDTO(MemberResponseDTO memberResponseDTO, List<MemberCodeResponseDTO> MemberCodeResponseDTO) {
+    public static FetchMemberResponseDTO toDTO(MemberResponseDTO memberResponseDTO, List<MemberCodeResponseDTO> memberCodeResponseDTO, List<MemberCodeResponseDTO> memberCodeFilterResponseDTO) {
         return FetchMemberResponseDTO.builder()
                 .memberResponseDTO(memberResponseDTO)
-                .MemberCodeResponseDTOList(MemberCodeResponseDTO)
+                .MemberCodeResponseDTOList(memberCodeResponseDTO)
+                .MemberCodeFilterResponseDTOList(memberCodeFilterResponseDTO)
                 .build();
     }
 }

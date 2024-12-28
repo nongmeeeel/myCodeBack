@@ -23,11 +23,16 @@ public class Chat extends BaseEntity {
     private String title;
     private String type;
     private LocalDateTime lastMessage;
+//    private String lastMessageContent;
     private String useYn;
 
     @Builder.Default
     @OneToMany(mappedBy = "chat", fetch = FetchType.LAZY)
     private List<ChatMember> chatMembers = new ArrayList<>();
+
+    @Builder.Default
+    @OneToMany(mappedBy = "chat", fetch = FetchType.LAZY)
+    private List<ChatMessage> chatMessages = new ArrayList<>();
 
     public void setLastMessage(LocalDateTime localDateTime) {
         this.lastMessage = localDateTime;

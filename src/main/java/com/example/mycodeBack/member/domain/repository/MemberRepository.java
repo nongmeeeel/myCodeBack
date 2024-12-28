@@ -47,4 +47,15 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     """)
     List<MemberCodeResponseDTO> findCodeListByMemberId(@Param("memberId") Long memberId);
 
+    @Query("""
+        SELECT new com.example.mycodeBack.member.dto.response.MemberCodeResponseDTO(ci.id, ci.title, cc.id, cc.title, ct.id, ct.title)
+        FROM Member m
+        JOIN m.memberCodeFilterMap mcm
+        JOIN mcm.codeItem ci
+        JOIN ci.codeCategory cc
+        JOIN cc.codeType ct
+        WHERE m.id = :memberId
+    """)
+    List<MemberCodeResponseDTO> findCodeFilterListByMemberId(@Param("memberId") Long memberId);
+
 }

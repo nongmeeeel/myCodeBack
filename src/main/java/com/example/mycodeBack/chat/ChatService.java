@@ -10,6 +10,7 @@ import com.example.mycodeBack.chat.dto.request.ChatMessageRequestDTO;
 import com.example.mycodeBack.chat.dto.request.CreateChatRoomRequestDTO;
 import com.example.mycodeBack.chat.dto.response.ChatMessageResponseDTO;
 import com.example.mycodeBack.chat.dto.response.ChatResponseDTO;
+import com.example.mycodeBack.chat.dto.response.ChatWithMemberResponseDTO;
 import com.example.mycodeBack.code.domain.CodeType;
 import com.example.mycodeBack.code.domain.repository.CodeItemRepository;
 import com.example.mycodeBack.code.domain.repository.CodeTypeRepository;
@@ -36,7 +37,10 @@ public class ChatService {
     private final MemberRepository memberRepository;
 
     @Transactional
-    public ChatResponseDTO createChatRoom(CreateChatRoomRequestDTO createChatRoomRequestDTO) {
+    public ChatWithMemberResponseDTO createChatRoom(CreateChatRoomRequestDTO createChatRoomRequestDTO, Long thisId) {
+
+        createChatRoomRequestDTO.addChatMemberIdListAtFirst(thisId);
+
         // 1:1 채팅방인 경우 기존 채팅방 확인
         if ("PRIVATE".equals(createChatRoomRequestDTO.getType())
                 && createChatRoomRequestDTO.getChatMemberIdList().size() == 2) {
@@ -46,9 +50,11 @@ public class ChatService {
                             createChatRoomRequestDTO.getChatMemberIdList().get(0),
                             createChatRoomRequestDTO.getChatMemberIdList().get(1)
                     );
-
             if (existingChat.isPresent()) {
-                return ChatResponseDTO.toDTO(existingChat.get());
+                Long chatId = existingChat.get().getId();
+                ChatWithMemberResponseDTO chatWithMember = chatRepository.findChatWithMember(chatId, thisId);
+
+                return chatWithMember;
             }
         }
         Chat chat = Chat.builder()
@@ -72,22 +78,18 @@ public class ChatService {
             chat.addChatMember(savedChatMember);
         }
 
+        ChatWithMemberResponseDTO chatWithMember = chatRepository.findChatWithMember(chat.getId(), thisId);
         // 채팅방과 멤버 정보를 함께 조회
 //        Chat savedChat = chatRepository.findByIdWithMembers(chat.getId())
 //                .orElseThrow(() -> new RuntimeException("채팅방을 찾을 수 없습니다"));
 
-        return ChatResponseDTO.toDTO(chat);
+        return chatWithMember;
     }
 
-    public List<ChatResponseDTO> findChatRoomsByUserId(String email) {
-        Long memberId = memberRepository.findByEmail(email)
-                .orElseThrow(() -> new UserNotFoundException(NOT_FOUND_USER_ID))
-                .getId();
+    public List<ChatWithMemberResponseDTO> findChatRoomsByUserId(Long memberId) {
 
-        List<Chat> chat = chatMemberRepository.findChatByMemberId(memberId);
-        return chat.stream()
-                .map(ChatResponseDTO::toDTO)
-                .toList();
+        List<ChatWithMemberResponseDTO> chatWithMemberResponseDTO = chatRepository.findChatListByMemberId(memberId);
+        return chatWithMemberResponseDTO;
     }
 
     @Transactional
@@ -119,7 +121,7 @@ public class ChatService {
     }
 
     public List<ChatMessageResponseDTO> getChatMessages(Long chatId) {
-        return chatMessageRepository.findByChatIdOrderBySendAtDesc(chatId)
+        return chatMessageRepository.findByChatIdOrderBySendAt(chatId)
                 .stream()
                 .map(ChatMessageResponseDTO::toDTO)
                 .toList();

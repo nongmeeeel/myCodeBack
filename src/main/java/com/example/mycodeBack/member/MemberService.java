@@ -76,11 +76,9 @@ public class MemberService {
 
         Long memberId = member.getId();
         List<MemberCodeResponseDTO> memberCodeResponseDTOList = memberRepository.findCodeListByMemberId(memberId);
-//        List<CodeTypeResponseDTO> codeTypeResponseDTOList = codeList.stream()
-//                .map(CodeTypeResponseDTO::toDTO)
-//                .toList();9
+        List<MemberCodeResponseDTO> memberCodeFilterResponseDTOList = memberRepository.findCodeFilterListByMemberId(memberId);
 
-            return FetchMemberResponseDTO.toDTO(memberResponseDTO, memberCodeResponseDTOList);
+        return FetchMemberResponseDTO.toDTO(memberResponseDTO, memberCodeResponseDTOList, memberCodeFilterResponseDTOList);
     }
 
     public List<MemberResponseDTO> selectMemberList() {
@@ -120,24 +118,24 @@ public class MemberService {
         member.updateTownCode(town);
     }
 
-    @Transactional
-    public void updateMemberCodeFilterMap(List<Long> itemIdList, String email) {
-        Member member = memberRepository.findByEmail(email)
-                .orElseThrow(() -> new UserNotFoundException(NOT_FOUND_USER_ID));
-        memberCodeFilterMapRepository.deleteByMember(member);
-
-        List<CodeItem> codeItems = codeItemRepository.findAllById(itemIdList);
-        // MemberCodeFilterMap 리스트 생성
-        List<MemberCodeFilterMap> memberCodeFilterMapList = codeItems.stream()
-                .map(codeItem -> {
-                    return MemberCodeFilterMap.builder()
-                            .member(member)
-                            .codeItem(codeItem)
-                            .build();
-                }).collect(Collectors.toList());
-
-        memberCodeFilterMapRepository.saveAll(memberCodeFilterMapList);
-    }
+//    @Transactional
+//    public void updateMemberCodeFilterMap(List<Long> itemIdList, String email) {
+//        Member member = memberRepository.findByEmail(email)
+//                .orElseThrow(() -> new UserNotFoundException(NOT_FOUND_USER_ID));
+//        memberCodeFilterMapRepository.deleteByMember(member);
+//
+//        List<CodeItem> codeItems = codeItemRepository.findAllById(itemIdList);
+//        // MemberCodeFilterMap 리스트 생성
+//        List<MemberCodeFilterMap> memberCodeFilterMapList = codeItems.stream()
+//                .map(codeItem -> {
+//                    return MemberCodeFilterMap.builder()
+//                            .member(member)
+//                            .codeItem(codeItem)
+//                            .build();
+//                }).collect(Collectors.toList());
+//
+//        memberCodeFilterMapRepository.saveAll(memberCodeFilterMapList);
+//    }
 
     @Transactional
     public void updateRefreshToken(String username, String refreshToken) {
@@ -193,8 +191,8 @@ public class MemberService {
     }
 
     @Transactional
-    public void updateMemberCodeMap(List<Long> codeItemIdSet, String email) {
-        Member member = memberRepository.findByEmail(email)
+    public void updateMemberCodeMap(List<Long> codeItemIdSet, Long thisId) {
+        Member member = memberRepository.findById(thisId)
                 .orElseThrow(() -> new UserNotFoundException(NOT_FOUND_USER_ID));
         List<CodeItem> CodeItemList = codeItemRepository.findAllById(codeItemIdSet);
 
@@ -210,11 +208,38 @@ public class MemberService {
         memberCodeMapRepository.saveAll(memberCodeMapList);
     }
 
-    public List<MemberCodeResponseDTO> selectMemberCodeList(String email) {
-        Member member = memberRepository.findByEmail(email)
+    @Transactional
+    public void updateMemberCodeFilterMap(List<Long> codeItemIdSet, Long thisId) {
+        Member member = memberRepository.findById(thisId)
+                .orElseThrow(() -> new UserNotFoundException(NOT_FOUND_USER_ID));
+        List<CodeItem> CodeItemList = codeItemRepository.findAllById(codeItemIdSet);
+
+        memberCodeMapRepository.deleteByMemberId(member.getId());
+
+        List<MemberCodeFilterMap> memberCodeFilterMapList = CodeItemList.stream()
+                .map(codeItem -> MemberCodeFilterMap.builder()
+                        .member(member)
+                        .codeItem(codeItem)
+                        .build())
+                .toList();
+
+        memberCodeFilterMapRepository.saveAll(memberCodeFilterMapList);
+    }
+
+    public List<MemberCodeResponseDTO> selectMemberCodeList(Long thisId) {
+        Member member = memberRepository.findById(thisId)
                 .orElseThrow(() -> new UserNotFoundException(NOT_FOUND_USER_ID));
 
         List<MemberCodeResponseDTO> memberCodeResponseDTOList = memberRepository.findCodeListByMemberId(member.getId());
+
+        return memberCodeResponseDTOList;
+    }
+
+    public List<MemberCodeResponseDTO> selectMemberCodeFilterList(Long thisId) {
+        Member member = memberRepository.findById(thisId)
+                .orElseThrow(() -> new UserNotFoundException(NOT_FOUND_USER_ID));
+
+        List<MemberCodeResponseDTO> memberCodeResponseDTOList = memberRepository.findCodeFilterListByMemberId(member.getId());
 
         return memberCodeResponseDTOList;
     }

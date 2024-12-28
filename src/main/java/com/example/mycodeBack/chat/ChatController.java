@@ -5,6 +5,7 @@ import com.example.mycodeBack.chat.dto.request.ChatMessageRequestDTO;
 import com.example.mycodeBack.chat.dto.request.CreateChatRoomRequestDTO;
 import com.example.mycodeBack.chat.dto.response.ChatMessageResponseDTO;
 import com.example.mycodeBack.chat.dto.response.ChatResponseDTO;
+import com.example.mycodeBack.chat.dto.response.ChatWithMemberResponseDTO;
 import com.example.mycodeBack.code.dto.response.CodeTypeResponseDTO;
 import com.example.mycodeBack.common.config.auth.CustomUser;
 import lombok.RequiredArgsConstructor;
@@ -37,21 +38,19 @@ public class ChatController {
     }
 
     @GetMapping("/rooms")
-    public ResponseEntity<List<ChatResponseDTO>> selectChatRoomList(Authentication authentication) {
+    public ResponseEntity<List<ChatWithMemberResponseDTO>> selectChatRoomList(Authentication authentication) {
         CustomUser customUser = (CustomUser) authentication.getPrincipal();
 
-        List<ChatResponseDTO> chatRooms = chatService.findChatRoomsByUserId(customUser.getEmail());
-        return ResponseEntity.ok(chatRooms);
+        List<ChatWithMemberResponseDTO> chatWithMemberResponseDTO = chatService.findChatRoomsByUserId(customUser.getId());
+        return ResponseEntity.ok(chatWithMemberResponseDTO);
     }
 
     @PostMapping("/room")
-    public ResponseEntity<ChatResponseDTO> createChatRoom(@RequestBody CreateChatRoomRequestDTO createChatRoomRequestDTO, Authentication authentication) {
+    public ResponseEntity<ChatWithMemberResponseDTO> createChatRoom(@RequestBody CreateChatRoomRequestDTO createChatRoomRequestDTO, Authentication authentication) {
         CustomUser thisMember = (CustomUser) authentication.getPrincipal();
 
-        createChatRoomRequestDTO.addChatMemberIdListAtFirst(thisMember.getId());
-
-        ChatResponseDTO chatRoom = chatService.createChatRoom(createChatRoomRequestDTO);
-        return ResponseEntity.ok(chatRoom);
+        ChatWithMemberResponseDTO chatWithMemberResponseDTO = chatService.createChatRoom(createChatRoomRequestDTO, thisMember.getId());
+        return ResponseEntity.ok(chatWithMemberResponseDTO);
     }
 
     @GetMapping("/messages/{chatId}")
