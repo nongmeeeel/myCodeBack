@@ -93,16 +93,24 @@ public class MemberService {
         return null;
     }
 
-    public List<MemberResponseDTO> selectMemberListByMap(MapRequestDTO mapRequestDTO) {
+    public List<FetchMemberResponseDTO> selectMemberListByMap(MapRequestDTO mapRequestDTO, Long thisId) {
+        List<FetchMemberResponseDTO> fetchMemberResponseDTOList = new ArrayList<>();
+
         List<Member> memberList = memberRepository.selectMemberListByMap(
                 mapRequestDTO.getSouthWestLat()
                 , mapRequestDTO.getNorthEastLat()
                 , mapRequestDTO.getSouthWestLng()
                 , mapRequestDTO.getNorthEastLng()
+                , thisId
         );
-        return memberList.stream()
-                .map(member -> MemberResponseDTO.toDTO(member))
-                .collect(Collectors.toList());
+
+        for(Member member : memberList){
+            MemberResponseDTO memberResponseDTO = MemberResponseDTO.toDTO(member);
+            List<MemberCodeResponseDTO> memberCodeResponseDTOList = memberRepository.findCodeListByMemberId(member.getId());
+            fetchMemberResponseDTOList.add(FetchMemberResponseDTO.toListDTO(memberResponseDTO, memberCodeResponseDTOList));
+        }
+
+        return fetchMemberResponseDTOList;
     }
 
     @Transactional
@@ -214,7 +222,7 @@ public class MemberService {
                 .orElseThrow(() -> new UserNotFoundException(NOT_FOUND_USER_ID));
         List<CodeItem> CodeItemList = codeItemRepository.findAllById(codeItemIdSet);
 
-        memberCodeMapRepository.deleteByMemberId(member.getId());
+        memberCodeFilterMapRepository.deleteByMemberId(member.getId());
 
         List<MemberCodeFilterMap> memberCodeFilterMapList = CodeItemList.stream()
                 .map(codeItem -> MemberCodeFilterMap.builder()

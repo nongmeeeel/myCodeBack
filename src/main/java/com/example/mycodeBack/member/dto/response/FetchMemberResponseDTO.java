@@ -23,4 +23,11 @@ public class FetchMemberResponseDTO {
                 .MemberCodeFilterResponseDTOList(memberCodeFilterResponseDTO)
                 .build();
     }
+
+    public static FetchMemberResponseDTO toListDTO(MemberResponseDTO memberResponseDTO, List<MemberCodeResponseDTO> memberCodeResponseDTO) {
+        return FetchMemberResponseDTO.builder()
+                .memberResponseDTO(memberResponseDTO)
+                .MemberCodeResponseDTOList(memberCodeResponseDTO)
+                .build();
+    }
 }

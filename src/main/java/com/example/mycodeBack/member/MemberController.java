@@ -48,11 +48,12 @@ public class MemberController {
     }
 
     @GetMapping("/list/by-map")
-    public ResponseEntity<List<MemberResponseDTO>> selectMemberListByMapInfoAPI(MapRequestDTO mapRequestDTO) {
+    public ResponseEntity<List<FetchMemberResponseDTO>> selectMemberListByMapInfoAPI(MapRequestDTO mapRequestDTO, Authentication authentication) {
+        CustomUser customUser = (CustomUser)authentication.getPrincipal();
 
-        List<MemberResponseDTO> memberResponseDTOList = memberService.selectMemberListByMap(mapRequestDTO);
+        List<FetchMemberResponseDTO> fetchMemberResponseDTOList = memberService.selectMemberListByMap(mapRequestDTO, customUser.getId());
         return ResponseEntity.ok()
-                .body(memberResponseDTOList);
+                .body(fetchMemberResponseDTOList);
     }
 
     // 내 동네 UPDATE

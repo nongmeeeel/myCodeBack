@@ -20,12 +20,37 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
     Member findByRefreshToken(String refreshToken);
 
-    @Query("SELECT m FROM Member m JOIN m.town t WHERE t.y BETWEEN :southWestLat AND :northEastLat AND t.x BETWEEN :southWestLng AND :northEastLng")
+    @Query("""
+    SELECT m 
+    FROM Member m 
+    JOIN m.town t 
+    LEFT JOIN m.memberCodeMap mcm
+    LEFT JOIN mcm.codeItem c
+    WHERE t.y BETWEEN :southWestLat AND :northEastLat
+    AND t.x BETWEEN :southWestLng AND :northEastLng
+    AND m.id != :thisId
+    AND (
+        NOT EXISTS (
+            SELECT 1
+            FROM Member m2
+            JOIN m2.memberCodeFilterMap mcfm
+            WHERE m2.id = :thisId
+        ) OR 
+        c.id IN (
+            SELECT c2.id
+            FROM Member m2
+            LEFT JOIN m2.memberCodeFilterMap mcfm
+            JOIN mcfm.codeItem c2
+            WHERE m2.id = :thisId
+        )
+    )
+""")
     List<Member> selectMemberListByMap(
             @Param("southWestLat") double southWestLat,
             @Param("northEastLat") double northEastLat,
             @Param("southWestLng") double southWestLng,
-            @Param("northEastLng") double northEastLng
+            @Param("northEastLng") double northEastLng,
+            @Param("thisId") Long thisId
     );
 
 
